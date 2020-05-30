@@ -1,7 +1,6 @@
 const Logger = require("../logger/logger");
 const fs = require("fs");
 
-const register = require("../discord/register");
 const conf = require("../config/conf");
 
 var registeredUsers = {};
@@ -28,7 +27,7 @@ module.exports.addUser = (did, user_details) => {
 };
 
 module.exports.getUsers = () => {
-  return registeredUsers;
+    return registeredUsers;
 };
 
 module.exports.deleteUser = (did) => {

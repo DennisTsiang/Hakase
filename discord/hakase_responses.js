@@ -2,22 +2,22 @@ const Logger = require("../logger/logger");
 const request = require('request');
 
 
-module.exports.interpretHakaseQuery = (client, message) => {
+module.exports.interpretHakaseQuery = async (client, message) => {
     if (message.cleanContent == "meow" || message.cleanContent.includes("nya")) {
         Logger.log("info", "Received meow request");
-        message.channel.sendMessage("https://tinyurl.com/y2mlo33q");
+        await message.channel.send("https://tinyurl.com/y2mlo33q");
     } else if (message.cleanContent == "dance") {
         Logger.log("info", "Received dance request");
-        message.channel.sendMessage("https://tinyurl.com/yyulqpeg");
+        await message.channel.send("https://tinyurl.com/yyulqpeg");
     } else if (message.cleanContent == "shark") {
         Logger.log("info", "Received shark request");
-        message.channel.sendMessage("https://tinyurl.com/yybbw6au");
+        await message.channel.send("https://tinyurl.com/yybbw6au");
     } else if (message.cleanContent.toLowerCase().includes("sleep")) {
         Logger.log("info", "Received sleep request");
-        message.channel.sendMessage("But I don't wanna!\nhttps://tinyurl.com/y5xmjyuo");
+        await message.channel.send("But I don't wanna!\nhttps://tinyurl.com/y5xmjyuo");
     } else if (message.cleanContent.toLowerCase() == "have a roll cake") {
         Logger.log("info", "Received roll cake request");
-        message.channel.sendMessage("Thank you!\nhttps://tinyurl.com/y8h4docz");
+        await message.channel.send("Thank you!\nhttps://tinyurl.com/y8h4docz");
     } else if (message.cleanContent.toLowerCase().match(/(G|g)ood bot.?/)) {
         return;
     } else if (message.cleanContent.toLowerCase().match(/(B|b)ad bot.?/)) {
@@ -25,9 +25,9 @@ module.exports.interpretHakaseQuery = (client, message) => {
     } else if (message.cleanContent.startsWith("Hakase is")) {
         if (containsPraiseWords(message.cleanContent) && !containsBlameWords(message.cleanContent) ||
             containsPraisePhrases(message.cleanContent)) {
-            message.channel.sendMessage("Ehehehe~ your praise making me blush.\nhttps://tinyurl.com/w6zoctl");
+            await message.channel.send("Ehehehe~ your praise making me blush.\nhttps://tinyurl.com/w6zoctl");
         } else {
-            message.channel.sendMessage("https://tinyurl.com/y2qev36j");
+            await message.channel.send("https://tinyurl.com/y2qev36j");
         }
     } else if (message.cleanContent.toLowerCase() == "jankenpon") {
         let clips = [
@@ -40,25 +40,25 @@ module.exports.interpretHakaseQuery = (client, message) => {
         ];
         let random = Math.floor(Math.random() * clips.length);
         let outcome = clips[random];
-        message.channel.sendMessage(outcome);
+        await message.channel.send(outcome);
     } else if (message.cleanContent.toLowerCase() == "play that funky music") {
-        message.channel.sendMessage("https://youtu.be/WP6DJfhPQTg");
+        await message.channel.send("https://youtu.be/WP6DJfhPQTg");
     } else if (message.cleanContent.toLowerCase().match(/(Will|Is) (\w+ ?)+\?/i)) {
-        message.channel.sendMessage(yesNoResponses[Math.floor(Math.random() * yesNoResponses.length)]);
+        await message.channel.send(yesNoResponses[Math.floor(Math.random() * yesNoResponses.length)]);
     } else {
         Logger.log("info", "Received unknown request. Searching Gfycat...");
         let urlQuery = encodeURI(message);
-        request('https://api.gfycat.com/v1/gfycats/search?search_text=' + urlQuery, { json: true }, (err, res, body) => {
+        request('https://api.gfycat.com/v1/gfycats/search?search_text=' + urlQuery, { json: true }, async (err, res, body) => {
             if (err) {
                 Logger.warn(err);
-                message.channel.sendMessage("Sorry Hakase is busy right now. Go ask Nano instead.");
+                await message.channel.send("Sorry Hakase is busy right now. Go ask Nano instead.");
                 return;
             }
             let gifs = body["gfycats"];
             gifs.sort(gfycatSearchResultCompare);
             for (let gif of gifs) {
                 if (gif["nsfw"] == "0") {
-                    message.channel.sendMessage(gif["max5mbGif"]);
+                    await message.channel.send(gif["max5mbGif"]);
                     return;
                 }
             }
@@ -106,11 +106,12 @@ function containsWordsWithNoNegation(message, words) {
     let messageWords = message.toLowerCase().split(" ");
     let prevWord = "";
     for (messageWord of messageWords) {
-        if (words.includes(messageWord) && prevWord != "not" && prevWord != "no") {
-            return true;
-        } else {
-            prevWord = messageWord;
+        for (word of words) {
+            if (messageWord.toLowerCase().includes(word) && prevWord != "not" && prevWord != "no") {
+                return true;
+            }
         }
+        prevWord = messageWord;
     }
     return false;
 }
