@@ -1,4 +1,4 @@
-# Bot Guildy
+# Hakase
 
 ## API
 All commands are prefixed with an exclamation mark.
