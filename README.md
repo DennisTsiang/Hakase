@@ -65,7 +65,9 @@ Example:
     "Port" : 8080
   },
 
-  "SauceNAO": "SauceNAO Apikey"
+      "SauceNAO": {
+        "apikey": ""
+    }
 }
 
 ```

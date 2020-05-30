@@ -1,11 +1,15 @@
 const conf = require("../config/conf");
 const sagiri = require('sagiri');
+const Logger = require("../logger/logger");
 
 module.exports.searchSauceNAO = async (message, client) => {
     let sauceNAO = null;
     try {
         let sauceNAOApiKey = conf().SauceNAO.apikey;
-        if (sauceNAO == undefined || sauceNAO == "") return;
+        if (sauceNAOApiKey == undefined || sauceNAOApiKey == "") {
+            Logger.log("info", "Skipping reverse search as SauceNAO API Key not found.");
+            return;
+        }
         sauceNAO = sagiri(sauceNAOApiKey);
     } catch (err) {
         return;
