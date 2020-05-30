@@ -21,17 +21,22 @@ Examples
 
 `delete_user` - Deletes a user from the user catalogue.
 
-`fetch_users_json` - Sends the user.json file.
-
 Examples
 ```
 !delete_user @covfefe, Donald Trump
 !delete_user covfefe, Donald Trump
-
 ```
 
+`fetch_users_json` - Sends the user.json file.
+
+`register` - Sends a registration request
+Examples
+```
+!register Donald Trump, 
+!register Donald Trump, <some verification e.g. link to a driving license>
+```
 ## Configuration file
-Stored in `config.json`
+Stored in `conf.json`
 
 Example:
 ```
@@ -41,30 +46,26 @@ Example:
   },
 
   "Discord" : {
-    "APIKey" : "The bot's secret token",
+    "APIKey" : "The bot's secret token. This is not the client secret.",
     "GuildId" : "The guild's id",
     "AdminRole" : "Committee",
-    "MemberRole" : "ICAS Members"
+    "MemberRole" : "ICAS Members",
+    "AdminChannel" : "Channel to send register",
+    "ImageChannels": [
+      "name of image channel to have source reverse lookups made"
+    ]
   },
 
   "Verification": [
     "Your driving licence"
   ],
 
-  "Facebook" : {
-    "AppID" : "",
-    "AppSecret" : "",
-    "GroupId" : ""
-  },
-
   "Web" : {
     "Address" : "http://localhost",
     "Port" : 8080
   },
 
-  "GamesList" : [
-    
-  ]
+  "SauceNAO": "SauceNAO Apikey"
 }
 
 ```
