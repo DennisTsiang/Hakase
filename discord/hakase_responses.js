@@ -55,6 +55,9 @@ module.exports.interpretHakaseQuery = async (client, message) => {
                 return;
             }
             let gifs = body["gfycats"];
+            if (gifs == undefined) {
+                return;
+            }
             gifs.sort(gfycatSearchResultCompare);
             for (let gif of gifs) {
                 if (gif["nsfw"] == "0") {

@@ -3,6 +3,9 @@ const sagiri = require('sagiri');
 const Logger = require("../logger/logger");
 
 module.exports.searchSauceNAO = async (message, client) => {
+    if (message.author.id === client.user.id) {
+        return;
+    }
     let sauceNAO = null;
     try {
         let sauceNAOApiKey = conf().SauceNAO.apikey;
