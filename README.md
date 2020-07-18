@@ -53,7 +53,8 @@ Example:
     "AdminChannel" : "Channel to send register",
     "ImageChannels": [
       "name of image channel to have source reverse lookups made"
-    ]
+    ],
+    "EmojiReactID": "395721719144251393"
   },
 
   "Verification": [

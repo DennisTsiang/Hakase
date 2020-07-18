@@ -85,7 +85,7 @@ If your roles do not change within the hour, feel free to message a ${module.exp
 }
 
 function getRoleIds(client) {
-    var rolesManager = new Discord.Guild(client, { id: conf().Discord.GuildId }).roles;
+    var rolesManager = client.guilds.cache.get(conf().Discord.GuildId).roles;
     rolesManager.fetch()
         .then(roles => {
             var adminRoles = [];
