@@ -36,8 +36,12 @@ exports.connect = function () {
                     await message.channel.send("https://tinyurl.com/y3os3kk3");
                 }
             } else if (message.cleanContent.toLowerCase() == "help") {
-                Logger.log("info", "Got a command, now executing...");
-                interpreter.handleCom("!help", client);
+                if (message.channel.type == "dm")
+                {
+                    Logger.log("info", "Got a command, now executing...");
+                    message.cleanContent = message.content = "!help";
+                    interpreter.handleCom(message, client);
+                }
             } else if (message.cleanContent.charAt(0) == '!') {
                 Logger.log("info", "Got a command, now executing...");
                 interpreter.handleCom(message, client);

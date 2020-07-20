@@ -229,25 +229,10 @@ If your roles do not change within the next hour, feel free to PM a ${conf().Dis
                 .catch(error => Logger.log("info", "Unable to upload users.json. Error: " + error));
             break;
         case "!help":
-            const embedHelp = new Discord.MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('Hakase help commands')
-                .setDescription('List of available commands for Hakase. Arguments of the form <arg> are mandatory and to be replaced with appropriate text. Arguments of the form [arg] are optional.')
-                .addFields(
-                    { name: '!whois <discord username or nickname>', value: 'Return real name of discord user. Only works if their name has been added to the database. Also accepts @ mentions.' },
-                    { name: '!whois <full real name>', value: 'Returns the discord username that corresponds to their full real name. Only if their name has been added to the database.' },
-                    { name: '!insertuser <discord username>, <full real name>', value: 'See !insert_user' },
-                    { name: '!insert_user  <discord username>, <full real name>', value: 'Adds someone to the name database. On successful insert, the user will be granted member role.' },
-                    { name: '!list_users', value: 'Returns name database entries in a JSON formatted string. Requires permissions to invoke.' },
-                    { name: '!delete_user <discord username>', value: 'Deletes an entry from the name database. Requires permissions to invoke.' },
-                    { name: '!register <full real name>, [identification]', value: 'Sends a message to admin channel so that admins can verify user.' },
-                    { name: '!fetch_users_json', value: 'Sends the name database as a JSON file. Requires permissions to invoke.' },
-                    { name: '!HAKASE', value: 'Call upon Hakase.' },
-                )
-                .attachFiles("images/Hakase_avatar.png")
-                .setThumbnail("attachment://Hakase_avatar.png")
-                .setTimestamp()
-            await message.channel.send(embedHelp);
+            let query = new Discord.Message(client, null, message.channel);
+            query.content = query.cleanContent = "help";
+            hakase.interpretHakaseQuery(client, query);
+            break;
     }
 };
 
