@@ -195,7 +195,7 @@ module.exports.handleCom = async (message, client) => {
                 } else {
                     Logger.log("info", "Admin channel found. Sending message...")
                     channel.send(`New user ${message.author.username} (real name apparently ${realName}, identification provided: ${identification}) has requested to join the server.
-If the user seems legitimate, please add him via \`!insertuser ${message.author.username}, ${realName}\``);
+If the user seems legitimate, please add them via \`!insertuser ${message.author.username}, ${realName}\``);
                     await message.channel.send(
                         `Thanks for registering! A ${conf().Discord.AdminRole} member should review your request shortly.
 If your roles do not change within the next hour, feel free to PM a ${conf().Discord.AdminRole}`);
