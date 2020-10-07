@@ -111,7 +111,7 @@ module.exports.handleCom = async (message, client) => {
                         await message.channel.send("There were multiple matches for that nickname. Please use the @ mention.");
                         return;
                     } else {
-                        var user_details = { name: name , fresher: fresher };
+                        var user_details = { name: name };
                         auth.addUser(id, user_details);
                         userfunction.addRoleByUserId(conf().Discord.MemberRole, id, client);
                         if (fresher) {
@@ -180,7 +180,6 @@ module.exports.handleCom = async (message, client) => {
         case "!register":
             Logger.log("info", "Received register request")
             var params = command.join(' ').split(',');
-            console.log(params);
             var realName = params[0];
             if (realName === "") {
                 await message.channel.send("Please provide a real name.");
