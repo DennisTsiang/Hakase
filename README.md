@@ -50,6 +50,7 @@ Example:
     "GuildId" : "The guild's id",
     "AdminRole" : "Committee",
     "MemberRole" : "ICAS Members",
+    "FresherRole": "Fresher",
     "AdminChannel" : "Channel to send register",
     "ImageChannels": [
       "name of image channel to have source reverse lookups made"
@@ -66,9 +67,9 @@ Example:
     "Port" : 8080
   },
 
-      "SauceNAO": {
-        "apikey": ""
-    }
+  "SauceNAO": {
+    "apikey": ""
+  }
 }
 
 ```

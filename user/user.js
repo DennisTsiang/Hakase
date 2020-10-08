@@ -12,10 +12,9 @@ module.exports.addRoleByUserId = (rolename, id, client) => {
     .then((member) => {
       let roles = Array.from(member.roles.cache.values()).map(role => role.name);
       if (!roles.includes(rolename)) {
-
         promiseRetry(function (retry, number) {
-          return member.edit({ roles: [role.id] })
-            .then((result) => Logger.log("info", `Gave user ${member.user.username} the role ${rolename}`),
+          return member.roles.add(role)
+            .then(() => Logger.log("info", `Gave user ${member.user.username} the role ${rolename}`),
               (err) => {
                 Logger.log("info", "Could not assign role");
                 retry(err);
