@@ -185,18 +185,15 @@ module.exports.handleCom = async (message, client) => {
                 await message.channel.send("Please provide a real name.");
                 return;
             }
-            var fresher = params[1];
-            if (fresher == null) {
-                fresher = "no";
+            var fresher = false;
+            if (params.length >= 2) {
+                var fresherStr = params[1].trim().toLowerCase().replace(/"/g, ``);
+                if ([`yes`, `no`].indexOf(fresherStr) === -1) {
+                    await message.channel.send(`${params[1]} is not a valid second argument. Please enter "yes" if you are a fresher, "no" otherwise.`);
+                    return;
+                }
+                fresher = fresherStr === `yes`;
             }
-            else {
-                fresher = fresher.trim().toLowerCase();
-            }
-            if (["yes", "\"yes\"", "no", "\"no\""].indexOf(fresher) === -1) {
-                await message.channel.send(`${fresher} is not a valid second argument. Please enter "yes" if you are a fresher, "no" otherwise.`);
-                return;
-            }
-            fresher = fresher === `yes` || fresher === `"yes"`;
             var identification = "";
             if (params.length > 2) {
                 identification = params.slice(2).join(",");
@@ -213,7 +210,7 @@ module.exports.handleCom = async (message, client) => {
                     Logger.log("info", `Could not find channel: ${channelName}`)
                 } else {
                     Logger.log("info", "Admin channel found. Sending message...")
-                    channel.send(`New user ${message.author.username} (real name apparently ${realName}, fresher: ${fresher ? "yes" : "no"}, identification provided: ${identification}) has requested to join the server.
+                    channel.send(`New user ${message.author.username} (real name apparently ${realName}, fresher: ${fresherStr}, identification provided: ${identification}) has requested to join the server.
 If the user seems legitimate, please add them via \`!insertuser ${message.author.username}, ${fresher ? "fresher" : "non-fresher"}, ${realName}\``);
                     await message.channel.send(
                         `Thanks for registering! A ${conf().Discord.AdminRole} member should review your request shortly.
