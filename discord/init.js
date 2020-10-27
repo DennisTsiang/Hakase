@@ -9,7 +9,14 @@ const image_source = require("./image_source");
 
 exports.connect = function () {
     return new Promise(function (resolve, reject) {
-        const client = new Discord.Client();
+        const client = new Discord.Client({ ws: { intents: [
+            'GUILDS',
+            'GUILD_MESSAGES',
+            "GUILD_PRESENCES",
+            "GUILD_MEMBERS",
+            "GUILD_MESSAGE_REACTIONS",
+            "DIRECT_MESSAGES"
+        ] }} );
 
         Logger.log("info", "Connecting to Discord...");
         client.login(conf().Discord.APIKey);
