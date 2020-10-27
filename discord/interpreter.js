@@ -58,7 +58,8 @@ module.exports.handleCom = async (message, client) => {
                         var realName = auth.getRealName(id);
                         await message.channel.send(`${nick}'s real name is ${realName}.`);
                     }
-                });
+                })
+                .catch(() => { return; });
             break;
         case "!insertuser":
         case "!insert_user":
@@ -257,24 +258,28 @@ function findUidByNick(name, client) {
         var guild = client.guilds.cache.get(conf().Discord.GuildId);
         guild.fetch()
             .then(fetchedGuild => {
-                var ulist = fetchedGuild.members.fetch();
                 if (name.charAt(0) == '@') {
                     name = name.substring(1);
                 }
                 Logger.log("info", `Searching for ${name}`)
-                ulist.then((membersMap) => {
-                    var matches = Array.from(membersMap.values()).filter((member, key) => {
-                        return member.nickname == name || member.user.username == name;
+                fetchedGuild.members.fetch()
+                    .then((membersMap) => {
+                        var matches = Array.from(membersMap.values()).filter((member, key) => {
+                            return member.nickname == name || member.user.username == name;
+                        });
+                        if (matches.length > 1) {
+                            resolve(-2);
+                        } else if (matches.length == 0) {
+                            resolve(-1);
+                        } else {
+                            Logger.log("info", `Found matching id: ${matches[0].id}`);
+                            resolve(matches[0].id);
+                        }
+                    })
+                    .catch((error) => {
+                        Logger.log("error", `${error.code}: ${error.message}`);
+                        reject(-1);
                     });
-                    if (matches.length > 1) {
-                        resolve(-2);
-                    } else if (matches.length == 0) {
-                        resolve(-1);
-                    } else {
-                        Logger.log("info", `Found matching id: ${matches[0].id}`);
-                        resolve(matches[0].id);
-                    }
-                });
             });
     });
 }
