@@ -123,7 +123,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
                 let percentage = Math.random().toFixed(2) * 100;
                 let response = "According to Hakase's genius calculations ";
                 response += name.length > 0 ? name + " is " : "you are "; 
-                response += `${percentage}% monke!`;
+                response += `${percentage}% monke! 🐒`;
                 if (percentage > 70) {
                     response += "\nhttps://i.imgur.com/fw3295k.gif";
                 }
