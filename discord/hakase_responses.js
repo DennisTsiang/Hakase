@@ -4,7 +4,7 @@ const Discord = require("discord.js");
 
 module.exports.interpretHakaseQuery = async (client, message) => {
 
-    let query = message.cleanContent.toLowerCase();
+    let query = message.content.toLowerCase();
     if (query.startsWith("!hakase ")) {
         query = query.replace("!hakase ", "");
     }
