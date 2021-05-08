@@ -17,9 +17,9 @@ module.exports.handleCom = async (message, client) => {
             var nick = command.join(' ').trim();
             Logger.log("info", `Now executing whois query on user ${nick}`);
             var hakaseRegex = /@?(h|H)akase$/;
-            var nanoRegex = /(n|N)ano$/
+            var nanoRegex = /(n|N)ano$/;
             if (nick == "Bot Guildy") {
-                await message.channel.send(`We don't speak of the dead.`)
+                await message.channel.send(`We don't speak of the dead.`);
                 return;
             } else if (hakaseRegex.test(nick)) {
                 await message.channel.send("https://tinyurl.com/y4ajka9t");
@@ -90,7 +90,7 @@ module.exports.handleCom = async (message, client) => {
             if (message.mentions.users.size > 0) {
                 var messageMentions = message.mentions;
                 if (messageMentions.users.size > 1) {
-                    Logger.log("info", "Too many users mentioned.")
+                    Logger.log("info", "Too many users mentioned.");
                     await message.channel.send("Please only supply one user.");
                     return;
                 }
@@ -156,7 +156,7 @@ module.exports.handleCom = async (message, client) => {
             if (message.mentions.users.size > 0) {
                 var messageMentions = message.mentions;
                 if (messageMentions.users.size > 1) {
-                    Logger.log("info", "Too many users mentioned.")
+                    Logger.log("info", "Too many users mentioned.");
                     await message.channel.send("Please only supply one user.");
                     return;
                 }
@@ -179,7 +179,7 @@ module.exports.handleCom = async (message, client) => {
             }
             break;
         case "!register":
-            Logger.log("info", "Received register request")
+            Logger.log("info", "Received register request");
             var params = command.join(' ').split(',');
             var realName = params[0];
             if (realName === "") {
@@ -208,9 +208,9 @@ module.exports.handleCom = async (message, client) => {
             var channelName = conf().Discord.AdminChannel;
             findChannel(channelName, client).then(async (channel) => {
                 if (!channel) {
-                    Logger.log("info", `Could not find channel: ${channelName}`)
+                    Logger.log("info", `Could not find channel: ${channelName}`);
                 } else {
-                    Logger.log("info", "Admin channel found. Sending message...")
+                    Logger.log("info", "Admin channel found. Sending message...");
                     channel.send(`New user ${message.author.username} (real name apparently ${realName}, fresher: ${fresherStr}, identification provided: ${identification}) has requested to join the server.
 If the user seems legitimate, please add them via \`!insertuser ${message.author.username}, ${fresher ? "fresher" : "non-fresher"}, ${realName}\``);
                     await message.channel.send(
@@ -220,16 +220,20 @@ If your roles do not change within the next hour, feel free to PM a ${conf().Dis
             });
             break;
         case "!HAKASE":
-            message.channel.send(`Hakase here! How can I help?`).then(() => {
-                message.channel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 10000, errors: ['time'] })
-                    .then(collected => {
-                        hakase.interpretHakaseQuery(client, collected.first());
-                    })
-                    .catch(async error => {
-                        console.log(error);
-                        await message.channel.send("Hmph! Don't call me if you don't need me!");
-                    });
-            });
+            if (command.length > 0) {
+                hakase.interpretHakaseQuery(client, message);
+            } else {
+                message.channel.send(`Hakase here! How can I help?`).then(() => {
+                    message.channel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 10000, errors: ['time'] })
+                        .then(collected => {
+                            hakase.interpretHakaseQuery(client, collected.first());
+                        })
+                        .catch(async error => {
+                            console.log(error);
+                            await message.channel.send("Hmph! Don't call me if you don't need me!");
+                        });
+                });
+            }
             break;
         case "!fetch_users_json":
             var guildMember = message.member;
@@ -237,7 +241,7 @@ If your roles do not change within the next hour, feel free to PM a ${conf().Dis
             if (!(roles.includes(conf().Discord.AdminRole) ||
                 guildMember.hasPermission("MANAGE_GUILD") ||
                 guildMember.hasPermission("ADMINISTRATOR"))) {
-                await message.channel.send(`Only ${conf().Discord.AdminRole} allowed to use this command.`)
+                await message.channel.send(`Only ${conf().Discord.AdminRole} allowed to use this command.`);
                 return;
             }
             Logger.log("info", "uploading users.json");
@@ -261,7 +265,7 @@ function findUidByNick(name, client) {
                 if (name.charAt(0) == '@') {
                     name = name.substring(1);
                 }
-                Logger.log("info", `Searching for ${name}`)
+                Logger.log("info", `Searching for ${name}`);
                 fetchedGuild.members.fetch()
                     .then((membersMap) => {
                         var matches = Array.from(membersMap.values()).filter((member, key) => {

@@ -4,8 +4,10 @@ const Discord = require("discord.js");
 
 module.exports.interpretHakaseQuery = async (client, message) => {
 
-    query = message.cleanContent.toLowerCase();
-
+    let query = message.cleanContent.toLowerCase();
+    if (query.startsWith("!hakase ")) {
+        query = query.replace("!hakase ", "");
+    }
     /* Table of tuples representing a basic Hakase query and response.
     First param - boolean condition
     Second param - Logging text
@@ -82,7 +84,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             () => { return message.channel.send("https://youtu.be/WP6DJfhPQTg"); }
         ],
         [
-            query.match(/(Will|Is) (\w+ ?)+\?/i),
+            query.match(/(Will|Is|Should|Am I) (\w+ ?)+\?/i),
             "received magic 8 ball request",
             () => { return message.channel.send(yesNoResponses[Math.floor(Math.random() * yesNoResponses.length)]); }
         ],
@@ -115,7 +117,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             query.startsWith("monkerate"),
             "received monkerate request",
             () => {
-                const words = message.toString().split(" ");
+                const words = query.toString().split(" ");
                 let name = "";
                 if (words.length > 1) {
                     name = words[1];
@@ -124,7 +126,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
                 let response = "According to Hakase's genius calculations ";
                 response += name.length > 0 ? name + " is " : "you are "; 
                 response += `${percentage}% monke! 🐒`;
-                if (percentage > 70) {
+                if (percentage > 75) {
                     response += "\nhttps://i.imgur.com/fw3295k.gif";
                 }
                 return message.channel.send(response);
