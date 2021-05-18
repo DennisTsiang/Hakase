@@ -42,12 +42,40 @@ module.exports.interpretHakaseQuery = async (client, message) => {
         [
             query.match(/(G|g)ood bot.?/),
             "",
-            () => { return new Promise((resolve) => resolve()); }
+            () => {
+                if (message.cleanContent.toLowerCase().startsWith("!hakase"))
+                {
+                    return message.channel.send("Eheheh thank you!\nhttps://tinyurl.com/w6zoctl");
+                }
+                message.channel.messages.fetch({ limit: 2 })
+                .then(async messageMappings => {
+                    let messages = Array.from(messageMappings.values());
+                    let previousMessage = messages[1];
+                    if (previousMessage.author.id != client.user.id) {
+                        return message.channel.send("Eheheh thank you!\nhttps://tinyurl.com/w6zoctl");
+                    }
+                })
+                .catch(error => Logger.log("error", "Error fetching messages in channel"));
+            }
         ],
         [
             query.match(/(B|b)ad bot.?/),
             "",
-            () => { return new Promise((resolve) => resolve()); }
+            () => {
+                if (message.cleanContent.toLowerCase().startsWith("!hakase"))
+                {
+                    return message.channel.send("O-oh okay...Hakase was only trying her best. Please don't hurt Hakase. \nhttps://tinyurl.com/y95vkqar");
+                }
+                message.channel.messages.fetch({ limit: 2 })
+                .then(async messageMappings => {
+                    let messages = Array.from(messageMappings.values());
+                    let previousMessage = messages[1];
+                    if (previousMessage.author.id != client.user.id) {
+                        return message.channel.send("O-oh okay...Hakase was only trying her best. Please don't hurt Hakase. \nhttps://tinyurl.com/y95vkqar");
+                    }
+                })
+                .catch(error => Logger.log("error", "Error fetching messages in channel"));
+            }
         ],
         [
             query.startsWith("Hakase is"),
