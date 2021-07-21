@@ -6,6 +6,8 @@ const conf = require("../config/conf");
 const login = require("../user/auth");
 const interpreter = require("./interpreter");
 const image_source = require("./image_source");
+const youtubedl = require('youtube-dl-exec');
+const twittertext = require('twitter-text');
 
 exports.connect = function () {
     return new Promise(function (resolve, reject) {
@@ -54,8 +56,21 @@ exports.connect = function () {
                 interpreter.handleCom(message, client);
             } else if (conf().Discord.ImageChannels.includes(message.channel.name) && message.attachments.size == 1
                 && !containsURL(message)) {
-                Logger.log("info", "Found an image in image channel")
+                Logger.log("info", "Found an image in image channel");
                 image_source.searchSauceNAO(message, client);
+            } else if (!message.channel.nsfw && message.cleanContent.includes("://twitter.com/")) {
+                let twitterURLs = twittertext.extractUrls(message.cleanContent);
+                for (let url of twitterURLs) {
+                    try {
+                        let jsonQuery = await youtubedl(url, {
+                            "skip-download": true,
+                            "dump-json": true
+                        });
+                        let fxtwitterURL = url.replace("twitter.com", "fxtwitter.com");
+                        await message.channel.send(fxtwitterURL);
+                    } catch (e) {
+                    }
+                }
             } else if (message.cleanContent.toLowerCase().match(/(G|g)ood bot.?$/)) {
                 message.channel.messages.fetch({ limit: 2 })
                     .then(async messageMappings => {
