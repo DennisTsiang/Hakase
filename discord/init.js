@@ -165,7 +165,7 @@ async function handleTwitterVideo(client, message) {
     }
     let webhook = await message.channel.createWebhook("fxtwitter webhook");
     let userAvatarURL = message.author.displayAvatarURL();
-    let nickname = message.member.nickname;
+    let nickname = message.member.displayName;
     await message.delete();
     await webhook.send(replacedURLs.join("\n"), {
         username: nickname,
