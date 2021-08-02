@@ -37,6 +37,9 @@ exports.connect = function () {
 
         //When a member messages bot
         client.on("message", async function (message) {
+            if (message.author.bot) {
+                return;
+            }
             if (message.cleanContent.startsWith("HAKASE HAKASE HAKASE")) {
                 if (message.channel.type == "dm") {
                     var newMember = message.author;
@@ -59,18 +62,7 @@ exports.connect = function () {
                 Logger.log("info", "Found an image in image channel");
                 image_source.searchSauceNAO(message, client);
             } else if (!message.channel.nsfw && message.cleanContent.includes("://twitter.com/")) {
-                let twitterURLs = twittertext.extractUrls(message.cleanContent);
-                for (let url of twitterURLs) {
-                    try {
-                        let jsonQuery = await youtubedl(url, {
-                            "skip-download": true,
-                            "dump-json": true
-                        });
-                        let fxtwitterURL = url.replace("twitter.com", "fxtwitter.com");
-                        await message.channel.send(fxtwitterURL);
-                    } catch (e) {
-                    }
-                }
+                await handleTwitterVideo(client, message);
             } else if (message.cleanContent.toLowerCase().match(/(G|g)ood bot.?$/)) {
                 message.channel.messages.fetch({ limit: 2 })
                     .then(async messageMappings => {
@@ -141,4 +133,43 @@ function getRoleIds(client) {
 
 function containsURL(string) {
     return new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(string);
+}
+
+async function handleTwitterVideo(client, message) {
+    let twitterURLs = twittertext.extractUrls(message.cleanContent);
+    let replacedAtLeastOne = false;
+    let replacedURLs = [];
+    for (let url of twitterURLs) {
+        if (url.includes("fxtwitter.com")) {
+            replacedURLs.push(url);
+            continue;
+        }
+        try {
+            let videoURL = await youtubedl(url, {
+                "skip-download": true,
+                "get-url": true
+            });
+            if (videoURL.includes("video.twimg.com")) {
+                let fxtwitterURL = url.replace("twitter.com", "fxtwitter.com");
+                replacedURLs.push(fxtwitterURL);
+                replacedAtLeastOne = true;
+            } else {
+                replacedURLs.push(url);
+            }
+        } catch (e) {
+            replacedURLs.push(url);
+        }
+    }
+    if (!replacedAtLeastOne) {
+        return;
+    }
+    let webhook = await message.channel.createWebhook("fxtwitter webhook");
+    let userAvatarURL = message.author.displayAvatarURL();
+    let nickname = message.member.nickname;
+    await message.delete();
+    await webhook.send(replacedURLs.join("\n"), {
+        username: nickname,
+        avatarURL: userAvatarURL,
+    });
+    await webhook.delete();
 }
