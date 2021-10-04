@@ -93,10 +93,11 @@ function welcomeMessage(newMember) {
 
 To complete your registration into our server please direct message Hakase with the following
 
-!register [Your real name], [Type "yes" if you are a fresher, else "no"], [Some form of identification e.g. ${conf().Verification.join()}]
+!register [Your real name], [Type "yes" if you are a fresher, else "no"], [Some form of identification e.g. ${conf().Verification.join(", ")}]
 
-Once a ${module.exports.admin.toString()} member confirms your identity, you will be given permissions to join the other\
-channels. 
+For example: \`!register Hakase, yes, http://imgur.com/link.to.photo.of.your.imperial.id\`
+
+Once a ${module.exports.admin.toString()} member confirms your identity, you will be given permissions to join the other channels. 
 
 If your roles do not change within the hour, feel free to message a ${module.exports.admin.toString()} member.
 - Hakase`;
