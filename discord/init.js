@@ -61,7 +61,7 @@ exports.connect = function () {
                 && !containsURL(message)) {
                 Logger.log("info", "Found an image in image channel");
                 image_source.searchSauceNAO(message, client);
-            } else if (!message.channel.nsfw && message.cleanContent.includes("://twitter.com/")) {
+            } else if (false && !message.channel.nsfw && message.cleanContent.includes("://twitter.com/")) {
                 await handleTwitterVideo(client, message);
             } else if (message.cleanContent.toLowerCase().match(/(G|g)ood bot.?$/)) {
                 message.channel.messages.fetch({ limit: 2 })
@@ -99,7 +99,9 @@ For example: \`!register Hakase, yes, http://imgur.com/link.to.photo.of.your.imp
 
 Once a ${module.exports.admin.toString()} member confirms your identity, you will be given permissions to join the other channels. 
 
-If your roles do not change within the hour, feel free to message a ${module.exports.admin.toString()} member.
+If your roles do not change within a few hours, please try registering again (we might have just missed you, sorry!).
+
+If it has been 24 hours feel free to message a ${module.exports.admin.toString()} member.
 - Hakase`;
 }
 
