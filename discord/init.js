@@ -32,7 +32,7 @@ exports.connect = function () {
 
         //When a member joins the server
         client.on("guildMemberAdd", function (newMember) {
-            newMember.send(welcomeMessage(newMember));
+            newMember.send(welcomeMessage(newMember.user));
         });
 
         //When a member messages bot
