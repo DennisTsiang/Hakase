@@ -198,12 +198,13 @@ module.exports.handleCom = async (message, client) => {
             var identification = "";
             if (params.length > 2) {
                 identification = params.slice(2).join(",");
-            }
-            var blacklist = ["Bot Guildy", "@Bot Guildy"];
-            if (blacklist.includes(nick)) {
-                Logger.log("info", `There was an attempt to register an invalid user: ${nick}`);
-                await message.channel.send(`There was an attempt to add an invalid user: ${nick}`);
-                return;
+            } else if (message.attachments.size > 0) {
+                let attachmentIterator = message.attachments.values();
+                let attachment = attachmentIterator.next();
+                while (!attachment.done) {
+                    identification += attachment.value.url + " ";
+                    attachment = attachmentIterator.next();
+                }
             }
             var channelName = conf().Discord.AdminChannel;
             findChannel(channelName, client).then(async (channel) => {
@@ -215,7 +216,7 @@ module.exports.handleCom = async (message, client) => {
 If the user seems legitimate, please add them via \`!insertuser ${message.author.username}, ${fresher ? "fresher" : "non-fresher"}, ${realName}\``);
                     await message.channel.send(
                         `Thanks for registering! A ${conf().Discord.AdminRole} member should review your request shortly.
-If your roles do not change within the next hour, feel free to PM a ${conf().Discord.AdminRole}`);
+If your roles do not change within the next few hours, feel free to PM a ${conf().Discord.AdminRole}`);
                 }
             });
             break;

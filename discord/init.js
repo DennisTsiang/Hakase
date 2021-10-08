@@ -96,6 +96,7 @@ To complete your registration into our server please direct message Hakase with 
 !register [Your real name], [Type "yes" if you are a fresher, else "no"], [Some form of identification e.g. ${conf().Verification.join(", ")}]
 
 For example: \`!register Hakase, yes, http://imgur.com/link.to.photo.of.your.imperial.id\`
+You may also upload a photo to Discord as part of the message too.
 
 Once a ${module.exports.admin.toString()} member confirms your identity, you will be given permissions to join the other channels. 
 
