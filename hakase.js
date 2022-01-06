@@ -3,7 +3,6 @@ const winston = require("winston");
 const server = require("./webserver/server");
 const conf = require("./config/conf.js");
 const discord = require("./discord/init");
-const connect = require("./discord/connect");
 const auth = require("./user/auth");
 
 process.on('unhandledRejection', (reason, p) => {
@@ -32,7 +31,6 @@ server.startServer(clientPromise);
 
 //Connect bot to a server
 clientPromise.done(function(client) {
-    //connect.connectNewServer(client.user.id, "8");
 });
 
 

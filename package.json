@@ -9,9 +9,8 @@
     "debug": "~2.2.0",
     "discord.js": "^12.0.0",
     "node-schedule": "^1.3.2",
-    "open": "0.0.5",
+    "openai-api": "^1.2.6",
     "opusscript": "0.0.1",
-    "package.json": "^2.0.1",
     "promise": "^7.1.1",
     "promise-retry": "^1.1.1",
     "request": "^2.88.2",
@@ -20,9 +19,5 @@
     "twitter-text": "^3.1.0",
     "winston": "^2.4.5",
     "youtube-dl-exec": "^1.2.4"
-  },
-  "engines": {
-    "node": "12.14.1",
-    "npm": "6.13.4"
   }
 }

@@ -1,6 +1,7 @@
 const Logger = require("../logger/logger");
 const request = require('request');
 const Discord = require("discord.js");
+const OpenAI = require("../openai/openai");
 
 module.exports.interpretHakaseQuery = async (client, message) => {
 
@@ -112,7 +113,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             () => { return message.channel.send("https://youtu.be/WP6DJfhPQTg"); }
         ],
         [
-            query.match(/(Will|Is|Should|Am I) (\w+ ?)+\?/i),
+            query.match(/^(Will|Is|Should|Am I) (\w+ ?)+\?/i),
             "received magic 8 ball request",
             () => { return message.channel.send(yesNoResponses[Math.floor(Math.random() * yesNoResponses.length)]); }
         ],
@@ -160,6 +161,29 @@ module.exports.interpretHakaseQuery = async (client, message) => {
                 return message.channel.send(response);
             }
         ],
+        [
+            query.startsWith("gif"),
+            "received gif request",
+            () => {
+                let urlQuery = encodeURI(query.replace("gif ", ""));
+                request('https://api.gfycat.com/v1/gfycats/search?search_text=' + urlQuery, { json: true }, async (err, res, body) => {
+                    if (err) {
+                        Logger.warn(err);
+                        return message.channel.send("Sorry Hakase is busy right now. Go ask Nano instead.");
+                    }
+                    let gifs = body["gfycats"];
+                    if (gifs == undefined) {
+                        return;
+                    }
+                    gifs.sort(gfycatSearchResultCompare);
+                    for (let gif of gifs) {
+                        if (gif["nsfw"] == "0") {
+                            return message.channel.send(gif["max5mbGif"]);
+                        }
+                    }
+                });
+            }
+        ]
     ];
 
     for (let queryResponse of queryTable) {
@@ -170,26 +194,12 @@ module.exports.interpretHakaseQuery = async (client, message) => {
         }
     }
 
-    Logger.log("info", "Received unknown request. Searching Gfycat...");
-    let urlQuery = encodeURI(message);
-    request('https://api.gfycat.com/v1/gfycats/search?search_text=' + urlQuery, { json: true }, async (err, res, body) => {
-        if (err) {
-            Logger.warn(err);
-            await message.channel.send("Sorry Hakase is busy right now. Go ask Nano instead.");
-            return;
-        }
-        let gifs = body["gfycats"];
-        if (gifs == undefined) {
-            return;
-        }
-        gifs.sort(gfycatSearchResultCompare);
-        for (let gif of gifs) {
-            if (gif["nsfw"] == "0") {
-                await message.channel.send(gif["max5mbGif"]);
-                return;
-            }
-        }
-    });
+    Logger.log("info", "Received unknown request. Trying OpenAI GPT-3 response...");
+    if (!OpenAI.initialiseEngine()) {
+        return;
+    }
+    let queryResponse = await OpenAI.getOpenAICompletionResponse(query);
+    return message.channel.send(queryResponse);
 };
 
 function gfycatSearchResultCompare(a, b) {

@@ -69,6 +69,10 @@ Example:
 
   "SauceNAO": {
     "apikey": ""
+  },
+
+  "OpenAI": {
+    "APIKey": ""
   }
 }
 

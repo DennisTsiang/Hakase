@@ -3,10 +3,10 @@ const fs = require("fs");
 const Logger = require("../logger/logger");
 
 var prevLoc;
-var prevConf;
+var prevConf = null;
 
 module.exports = function(confLoc) {
-    if ((confLoc == null || confLoc == prevLoc) && prevConf) {
+    if (prevConf || confLoc == null || confLoc == prevLoc) {
         return prevConf;
     } else {
         Logger.log("info", "Now loading user configuration", {

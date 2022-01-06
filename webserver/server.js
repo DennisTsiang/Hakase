@@ -2,7 +2,6 @@ const http = require('http');
 const url = require("url");
 const Logger = require("../logger/logger");
 
-const auth = require("../user/auth");
 const conf = require("../config/conf");
 
 module.exports.startServer = function(dClient) {

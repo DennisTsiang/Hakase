@@ -3,7 +3,6 @@ const Logger = require("../logger/logger");
 const Promise = require("promise");
 
 const conf = require("../config/conf");
-const login = require("../user/auth");
 const interpreter = require("./interpreter");
 const image_source = require("./image_source");
 const youtubedl = require('youtube-dl-exec');
