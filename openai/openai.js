@@ -9,7 +9,7 @@ const openAIParameters = {
     max_tokens: 150,
     temperature: 0.5,
     stream: false,
-    stop: ['\n', '\r\n']
+    stop: ['\n', '\r\n', "Human"]
 };
 
 let intialPrompt = null;
