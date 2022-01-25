@@ -7,6 +7,7 @@ const interpreter = require("./interpreter");
 const image_source = require("./image_source");
 const youtubedl = require('youtube-dl-exec');
 const twittertext = require('twitter-text');
+const hakase_responses = require('./hakase_responses')
 
 exports.connect = function () {
     return new Promise(function (resolve, reject) {
@@ -68,7 +69,7 @@ exports.connect = function () {
                         let messages = Array.from(messageMappings.values());
                         let previousMessage = messages[1];
                         if (previousMessage.author.id == client.user.id) {
-                            await message.channel.send("Eheheh thank you!\nhttps://tinyurl.com/w6zoctl");
+                            await message.channel.send(hakase_responses.good_bot_message);
                         }
                     })
                     .catch(error => Logger.log("error", "Error fetching messages in channel"));
@@ -78,7 +79,7 @@ exports.connect = function () {
                         let messages = Array.from(messageMappings.values());
                         let previousMessage = messages[1];
                         if (previousMessage.author.id == client.user.id) {
-                            await message.channel.send("O-oh okay...Hakase was only trying her best. Please don't hurt Hakase. \nhttps://tinyurl.com/y95vkqar");
+                            await message.channel.send(hakase_responses.bad_bot_message());
                         }
                     })
                     .catch(error => Logger.log("error", "Error fetching messages in channel"));

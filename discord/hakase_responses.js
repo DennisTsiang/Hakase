@@ -3,6 +3,16 @@ const request = require('request');
 const Discord = require("discord.js");
 const OpenAI = require("../openai/openai");
 
+module.exports.good_bot_message = "Eheheh thank you!\nhttps://media.giphy.com/media/rtjsbSir7QFKGyi873/giphy.gif";
+module.exports.bad_bot_message = (message) => {
+    let responses = [
+        "O-oh okay...Hakase was only trying her best. Please don't hurt Hakase.\nhttps://media.giphy.com/media/SYXw4sRKLad4fIfaup/giphy.gif",
+        "https://media.giphy.com/media/9ID3I32ZQLZziHOcEn/giphy.gif",
+    ]
+    let random = Math.floor(Math.random() * responses.length);
+    return responses[random];
+}
+
 module.exports.interpretHakaseQuery = async (client, message) => {
 
     let query = message.content.toLowerCase();
@@ -38,7 +48,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
         [
             query == "have a roll cake",
             "Received roll cake request",
-            () => { return message.channel.send("Thank you!\nhttps://tinyurl.com/y8h4docz"); }
+            () => { return message.channel.send("Thank you!\nhttps://media.giphy.com/media/XT4FO1aSKGGHKCsflH/giphy.gif"); }
         ],
         [
             query.match(/(G|g)ood bot.?/),
@@ -46,17 +56,8 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             () => {
                 if (message.cleanContent.toLowerCase().startsWith("!hakase"))
                 {
-                    return message.channel.send("Eheheh thank you!\nhttps://tinyurl.com/w6zoctl");
+                    return message.channel.send(good_bot_message);
                 }
-                message.channel.messages.fetch({ limit: 2 })
-                .then(async messageMappings => {
-                    let messages = Array.from(messageMappings.values());
-                    let previousMessage = messages[1];
-                    if (previousMessage.author.id != client.user.id) {
-                        return message.channel.send("Eheheh thank you!\nhttps://tinyurl.com/w6zoctl");
-                    }
-                })
-                .catch(error => Logger.log("error", "Error fetching messages in channel"));
             }
         ],
         [
@@ -65,17 +66,8 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             () => {
                 if (message.cleanContent.toLowerCase().startsWith("!hakase"))
                 {
-                    return message.channel.send("O-oh okay...Hakase was only trying her best. Please don't hurt Hakase. \nhttps://tinyurl.com/y95vkqar");
+                    return message.channel.send(bad_bot_message());
                 }
-                message.channel.messages.fetch({ limit: 2 })
-                .then(async messageMappings => {
-                    let messages = Array.from(messageMappings.values());
-                    let previousMessage = messages[1];
-                    if (previousMessage.author.id != client.user.id) {
-                        return message.channel.send("O-oh okay...Hakase was only trying her best. Please don't hurt Hakase. \nhttps://tinyurl.com/y95vkqar");
-                    }
-                })
-                .catch(error => Logger.log("error", "Error fetching messages in channel"));
             }
         ],
         [
@@ -84,7 +76,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             () => {
                 if (containsPraiseWords(query) && !containsBlameWords(query) ||
                     containsPraisePhrases(query)) {
-                    return message.channel.send("Ehehehe~ your praise making me blush.\nhttps://tinyurl.com/w6zoctl");
+                    return message.channel.send("Ehehehe~ your praise making me blush.\nhttps://media.giphy.com/media/rtjsbSir7QFKGyi873/giphy.gif");
                 } else {
                     return message.channel.send("https://tinyurl.com/y2qev36j");
                 }
