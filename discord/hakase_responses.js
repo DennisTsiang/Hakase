@@ -41,7 +41,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             () => { return message.channel.send("https://tinyurl.com/yybbw6au"); }
         ],
         [
-            query.includes("sleep"),
+            query == "go to sleep" || query == "sleep",
             "Received sleep request",
             () => { return message.channel.send("But I don't wanna!\nhttps://tinyurl.com/y5xmjyuo"); }
         ],
