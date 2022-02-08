@@ -26,6 +26,11 @@ module.exports.interpretHakaseQuery = async (client, message) => {
     */
     const queryTable = [
         [
+            query.startsWith("!whois"),
+            "",
+            () => { return }
+        ],
+        [
             query == "meow" || query.includes("nya"),
             "Received meow request",
             () => { return message.channel.send("https://tinyurl.com/y2mlo33q"); }
