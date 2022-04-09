@@ -1,5 +1,5 @@
 const Logger = require("../logger/logger");
-const request = require('request');
+const request = require("request");
 const Discord = require("discord.js");
 const OpenAI = require("../openai/openai");
 
@@ -8,10 +8,10 @@ module.exports.bad_bot_message = (message) => {
     let responses = [
         "O-oh okay...Hakase was only trying her best. Please don't hurt Hakase.\nhttps://media.giphy.com/media/SYXw4sRKLad4fIfaup/giphy.gif",
         "https://media.giphy.com/media/9ID3I32ZQLZziHOcEn/giphy.gif",
-    ]
+    ];
     let random = Math.floor(Math.random() * responses.length);
     return responses[random];
-}
+};
 
 module.exports.interpretHakaseQuery = async (client, message) => {
 
@@ -28,7 +28,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
         [
             query.startsWith("!whois"),
             "",
-            () => { return }
+            () => { return; }
         ],
         [
             query == "meow" || query.includes("nya"),
@@ -119,23 +119,23 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             "received command help request",
             () => {
                 const embedHelp = new Discord.MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('Hakase help commands')
-                .setDescription('List of available commands for Hakase. Arguments of the form <arg> are mandatory and to be replaced with appropriate text. Arguments of the form [arg] are optional.')
-                .addFields(
-                    { name: '!whois <discord username or nickname>', value: 'Return real name of discord user. Only works if their name has been added to the database. Also accepts @ mentions.' },
-                    { name: '!whois <full real name>', value: 'Returns the discord username that corresponds to their full real name. Only if their name has been added to the database.' },
-                    { name: '!insertuser <discord username>, <full real name>', value: 'See !insert_user' },
-                    { name: '!insert_user  <discord username>, <full real name>', value: 'Adds someone to the name database. On successful insert, the user will be granted member role.' },
-                    { name: '!list_users', value: 'Returns name database entries in a JSON formatted string. Requires permissions to invoke.' },
-                    { name: '!delete_user <discord username>', value: 'Deletes an entry from the name database. Requires permissions to invoke.' },
-                    { name: '!register <full real name>, [identification]', value: 'Sends a message to admin channel so that admins can verify user.' },
-                    { name: '!fetch_users_json', value: 'Sends the name database as a JSON file. Requires permissions to invoke.' },
-                    { name: '!HAKASE', value: 'Call upon Hakase.' },
-                )
-                .attachFiles("images/Hakase_avatar.png")
-                .setThumbnail("attachment://Hakase_avatar.png")
-                .setTimestamp();
+                    .setColor("#0099ff")
+                    .setTitle("Hakase help commands")
+                    .setDescription("List of available commands for Hakase. Arguments of the form <arg> are mandatory and to be replaced with appropriate text. Arguments of the form [arg] are optional.")
+                    .addFields(
+                        { name: "!whois <discord username or nickname>", value: "Return real name of discord user. Only works if their name has been added to the database. Also accepts @ mentions." },
+                        { name: "!whois <full real name>", value: "Returns the discord username that corresponds to their full real name. Only if their name has been added to the database." },
+                        { name: "!insertuser <discord username>, <full real name>", value: "See !insert_user" },
+                        { name: "!insert_user  <discord username>, <full real name>", value: "Adds someone to the name database. On successful insert, the user will be granted member role." },
+                        { name: "!list_users", value: "Returns name database entries in a JSON formatted string. Requires permissions to invoke." },
+                        { name: "!delete_user <discord username>", value: "Deletes an entry from the name database. Requires permissions to invoke." },
+                        { name: "!register <full real name>, [identification]", value: "Sends a message to admin channel so that admins can verify user." },
+                        { name: "!fetch_users_json", value: "Sends the name database as a JSON file. Requires permissions to invoke." },
+                        { name: "!HAKASE", value: "Call upon Hakase." },
+                    )
+                    .attachFiles("images/Hakase_avatar.png")
+                    .setThumbnail("attachment://Hakase_avatar.png")
+                    .setTimestamp();
                 return message.channel.send(embedHelp);
             }
         ],
@@ -163,7 +163,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             "received gif request",
             () => {
                 let urlQuery = encodeURI(query.replace("gif ", ""));
-                request('https://api.gfycat.com/v1/gfycats/search?search_text=' + urlQuery, { json: true }, async (err, res, body) => {
+                request("https://api.gfycat.com/v1/gfycats/search?search_text=" + urlQuery, { json: true }, async (err, res, body) => {
                     if (err) {
                         Logger.warn(err);
                         return message.channel.send("Sorry Hakase is busy right now. Go ask Nano instead.");
@@ -195,7 +195,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
     if (!OpenAI.initialiseEngine()) {
         return;
     }
-    let queryResponse = await OpenAI.getOpenAICompletionResponse(query);
+    let queryResponse = await OpenAI.getOpenAICompletionResponse(message.author.id, query);
     return message.channel.send(queryResponse);
 };
 
