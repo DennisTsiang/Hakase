@@ -22,6 +22,11 @@ const openAIParameters = {
     stop: ["\n", "\r\n", "Human"]
 };
 
+const rateLimit = {
+    minute: 0,
+    numberOfRequestsMade: 0,
+};
+
 let intialPrompt = null;
 let openAIClient = null;
 
@@ -43,7 +48,7 @@ module.exports.initialiseEngine = () => {
 
 async function getContentFilterResponse(prompt) {
     contentFilterParameters.prompt = "<|endoftext|>" + prompt + "\n--\nLabel:";
-    const gptResponse = await openAIClient.complete(contentFilterParameter);
+    const gptResponse = await openAIClient.complete(contentFilterParameters);
 
     let output_label = gptResponse.data.choices[0].text;
     if (output_label == "2") {
@@ -87,6 +92,19 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
     const contentFilterLabel = await getContentFilterResponse(input);
     if (contentFilterLabel == 2) {
         return "Sorry Hakase is busy right now. Go ask Nano instead.";
+    }
+
+    const MAX_REQUESTS_PER_MINUTE = 10;
+    let date = new Date();
+    let minute = date.getMinutes();
+    if (rateLimit.minute != minute) {
+        rateLimit.minute = minute;
+        rateLimit.numberOfRequestsMade = 0;
+    }
+    if (rateLimit.numberOfRequestsMade >= MAX_REQUESTS_PER_MINUTE) {
+        return "You're asking Hakase too many questions! Give Hakase time to breathe! >_<";
+    } else {
+        rateLimit.numberOfRequestsMade += 1;
     }
 
     openAIParameters.prompt = intialPrompt + "Human: " + input + "\r\n";
