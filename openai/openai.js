@@ -84,16 +84,6 @@ async function getContentFilterResponse(prompt) {
 }
 
 module.exports.getOpenAICompletionResponse = async (userID, input) => {
-    // Send no more than 1000 characters per request as per usage guidelines
-    if (input.length > 1000) {
-        input = input.slice(0, 1000);
-    }
-
-    const contentFilterLabel = await getContentFilterResponse(input);
-    if (contentFilterLabel == 2) {
-        return "Sorry Hakase is busy right now. Go ask Nano instead.";
-    }
-
     const MAX_REQUESTS_PER_MINUTE = 10;
     let date = new Date();
     let minute = date.getMinutes();
@@ -105,6 +95,16 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
         return "You're asking Hakase too many questions! Give Hakase time to breathe! >_<";
     } else {
         rateLimit.numberOfRequestsMade += 1;
+    }
+
+    // Send no more than 1000 characters per request as per usage guidelines
+    if (input.length > 1000) {
+        input = input.slice(0, 1000);
+    }
+
+    const contentFilterLabel = await getContentFilterResponse(input);
+    if (contentFilterLabel == 2) {
+        return "Sorry Hakase is busy right now. Go ask Nano instead.";
     }
 
     openAIParameters.prompt = intialPrompt + "Human: " + input + "\r\n";
