@@ -6,7 +6,7 @@ const OpenAI = require("../openai/openai");
 module.exports.good_bot_message = "Eheheh thank you!\nhttps://media.giphy.com/media/rtjsbSir7QFKGyi873/giphy.gif";
 module.exports.bad_bot_message = (message) => {
     let responses = [
-        "O-oh okay...Hakase was only trying her best. Please don't hurt Hakase.\nhttps://media.giphy.com/media/NvdY36iGODpgyl3i5L/giphy.gif",
+        "O-oh okay...Hakase was only trying her best. Please don't hurt Hakase.\nhttps://media.giphy.com/media/SYXw4sRKLad4fIfaup/giphy.gif",
         "https://media.giphy.com/media/9ID3I32ZQLZziHOcEn/giphy.gif",
     ];
     let random = Math.floor(Math.random() * responses.length);
