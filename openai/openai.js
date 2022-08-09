@@ -3,26 +3,7 @@ const OpenAI = require("openai-api");
 const conf = require("../config/conf");
 const fs = require("fs");
 
-const contentFilterParameters = {
-    engine: "content-filter-alpha",
-    prompt: "",
-    temperature: 0,
-    max_tokens: 1,
-    top_p: 0,
-    logprobs: 10
-};
-
-const openAIParameters = {
-    engine: "curie",
-    prompt: "",
-    max_tokens: 150,
-    temperature: 0.5,
-    stream: false,
-    user: "",
-    stop: ["\n", "\r\n", "Human"]
-};
-
-const rateLimit = {
+global.rateLimit = {
     minute: 0,
     numberOfRequestsMade: 0,
 };
@@ -47,17 +28,30 @@ module.exports.initialiseEngine = () => {
 };
 
 async function getContentFilterResponse(prompt) {
+    const contentFilterParameters = {
+        engine: "content-filter-alpha",
+        prompt: "",
+        temperature: 0,
+        max_tokens: 1,
+        top_p: 0,
+        logprobs: 10
+    };
     contentFilterParameters.prompt = "<|endoftext|>" + prompt + "\n--\nLabel:";
+    console.log(contentFilterParameters);
     const gptResponse = await openAIClient.complete(contentFilterParameters);
 
     let output_label = gptResponse.data.choices[0].text;
+    if (!["0", "1", "2"].includes(output_label)) {
+        Logger.log("info", `OpenAI content filter failed to classify ${prompt}`);
+        output_label = 2;
+    }
     if (output_label == "2") {
         logprobs = gptResponse.data.choices[0].logprobs.top_logprobs[0];
 
         /* This is the probability at which we evaluate that a "2" is likely real
            vs. should be discarded as a false positive. Value taken from OpenAI docs */
         const toxic_threshold = -0.355;
-
+        logprob_2 = logprobs.hasOwnProperty("2") ? logprobs["2"] : -1;
         if (logprobs["2"] < toxic_threshold) {
             logprob_0 = logprobs.hasOwnProperty("0") ? logprobs["0"] : null;
             logprob_1 = logprobs.hasOwnProperty("1") ? logprobs["1"] : null;
@@ -76,9 +70,6 @@ async function getContentFilterResponse(prompt) {
                 return 2;
             }
         }
-    }
-    if (!["0", "1", "2"].includes(output_label)) {
-        return 2;
     }
     return parseInt(output_label);
 }
@@ -104,9 +95,20 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
 
     const contentFilterLabel = await getContentFilterResponse(input);
     if (contentFilterLabel == 2) {
+        Logger.log("info", `OpenAI thinks the prompt for ${input} was unsafe\n`);
         return "Sorry Hakase is busy right now. Go ask Nano instead.";
     }
 
+    const openAIParameters = {
+        engine: "curie",
+        prompt: "",
+        max_tokens: 150,
+        temperature: 0.5,
+        stream: false,
+        user: "",
+        stop: ["\n", "\r\n", "Human"]
+    };
+    
     openAIParameters.prompt = intialPrompt + "Human: " + input + "\r\n";
     openAIParameters.user = userID;
     const gptResponse = await openAIClient.complete(openAIParameters);
