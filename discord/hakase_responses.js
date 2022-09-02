@@ -129,7 +129,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
                         { name: "!insert_user  <discord username>, <full real name>", value: "Adds someone to the name database. On successful insert, the user will be granted member role." },
                         { name: "!list_users", value: "Returns name database entries in a JSON formatted string. Requires permissions to invoke." },
                         { name: "!delete_user <discord username>", value: "Deletes an entry from the name database. Requires permissions to invoke." },
-                        { name: "!register <full real name>, [identification]", value: "Sends a message to admin channel so that admins can verify user." },
+                        { name: "!register <real first and last name>, [identification]", value: "Sends a message to admin channel so that admins can verify user." },
                         { name: "!fetch_users_json", value: "Sends the name database as a JSON file. Requires permissions to invoke." },
                         { name: "!HAKASE", value: "Call upon Hakase." },
                     )

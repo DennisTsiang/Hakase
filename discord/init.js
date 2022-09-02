@@ -5,15 +5,15 @@ const Promise = require("promise");
 const conf = require("../config/conf");
 const interpreter = require("./interpreter");
 const image_source = require("./image_source");
-const youtubedl = require('youtube-dl-exec');
-const twittertext = require('twitter-text');
-const hakase_responses = require('./hakase_responses')
+const youtubedl = require("youtube-dl-exec");
+const twittertext = require("twitter-text");
+const hakase_responses = require("./hakase_responses");
 
 exports.connect = function () {
     return new Promise(function (resolve, reject) {
         const client = new Discord.Client({ ws: { intents: [
-            'GUILDS',
-            'GUILD_MESSAGES',
+            "GUILDS",
+            "GUILD_MESSAGES",
             "GUILD_PRESENCES",
             "GUILD_MEMBERS",
             "GUILD_MESSAGE_REACTIONS",
@@ -54,7 +54,7 @@ exports.connect = function () {
                     message.cleanContent = message.content = "!help";
                     interpreter.handleCom(message, client);
                 }
-            } else if (message.cleanContent.charAt(0) == '!') {
+            } else if (message.cleanContent.charAt(0) == "!") {
                 Logger.log("info", "Got a command, now executing...");
                 interpreter.handleCom(message, client);
             } else if (conf().Discord.ImageChannels.includes(message.channel.name) && message.attachments.size == 1
@@ -93,9 +93,9 @@ function welcomeMessage(newMember) {
 
 To complete your registration into our server please direct message Hakase with the following
 
-!register [Your real name], [Type "yes" if you are a fresher, else "no"], [Some form of identification e.g. ${conf().Verification.join(", ")}]
+!register [Your real first and last name], [Type "yes" if you are a fresher, else "no"], [Some form of identification e.g. ${conf().Verification.join(", ")}]
 
-For example: \`!register Hakase, yes, http://imgur.com/link.to.photo.of.your.imperial.id\`
+For example: \`!register Hakase Shinonome, yes, http://imgur.com/link.to.photo.of.your.imperial.id\`
 You may also upload a photo to Discord as part of the message too.
 
 Once a ${module.exports.admin.toString()} member confirms your identity, you will be given permissions to join the other channels. 
