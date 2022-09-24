@@ -47,6 +47,7 @@ Example:
 
   "Discord" : {
     "APIKey" : "The bot's secret token. This is not the client secret.",
+    "AppId" : "The application's (bot's) ID. This is not the client ID"
     "GuildId" : "The guild's id",
     "AdminRole" : "Committee",
     "MemberRole" : "ICAS Members",
