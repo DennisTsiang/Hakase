@@ -1,6 +1,7 @@
 const userfunction = require("../user/user");
 const Logger = require("../logger/logger");
 const auth = require("../user/auth");
+const conf = require("../config/conf.js");
 
 const USER_NOT_FOUND_MESSAGE = "Hakase couldn't find such a user with that nickname! Hakase will have to ask Nano about it when she gets home!";
 
