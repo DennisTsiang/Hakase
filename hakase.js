@@ -2,14 +2,13 @@ const winston = require("winston");
 
 const server = require("./webserver/server");
 const conf = require("./config/conf.js");
-const discord = require("./discord/init");
+const init = require("./discord/init");
 const auth = require("./user/auth");
 
-process.on('unhandledRejection', (reason, p) => {
-    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason.stack);
+process.on("unhandledRejection", (reason, p) => {
+    console.log("Unhandled Rejection at: Promise", p, "reason:", reason.stack);
     // Exit on unhandled errors so PM2 can restart app
     process.exit(1);
-    // application specific logging, throwing an error, or other logic here
 });
 
 // Load user Configuration
@@ -21,7 +20,7 @@ try {
 }
 
 //Connect to Discord
-var clientPromise = discord.connect();
+var clientPromise = init.connect();
 
 //Load user list
 auth.loadUsers();

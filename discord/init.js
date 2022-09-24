@@ -1,24 +1,25 @@
-const Discord = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
 const Logger = require("../logger/logger");
 const Promise = require("promise");
-
 const conf = require("../config/conf");
 const interpreter = require("./interpreter");
 const image_source = require("./image_source");
 const youtubedl = require("youtube-dl-exec");
 const twittertext = require("twitter-text");
 const hakase_responses = require("./hakase_responses");
+const { commandsTable } = require("./slash_commands.js");
 
 exports.connect = function () {
     return new Promise(function (resolve, reject) {
-        const client = new Discord.Client({ ws: { intents: [
-            "GUILDS",
-            "GUILD_MESSAGES",
-            "GUILD_PRESENCES",
-            "GUILD_MEMBERS",
-            "GUILD_MESSAGE_REACTIONS",
-            "DIRECT_MESSAGES"
-        ] }} );
+        const client = new Client({ intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.DirectMessages,
+            GatewayIntentBits.GuildMessageReactions,
+            GatewayIntentBits.GuildPresences
+        ] });
 
         Logger.log("info", "Connecting to Discord...");
         client.login(conf().Discord.APIKey);
@@ -36,7 +37,7 @@ exports.connect = function () {
         });
 
         //When a member messages bot
-        client.on("message", async function (message) {
+        client.on("messageCreate", async function (message) {
             if (message.author.bot) {
                 return;
             }
@@ -85,6 +86,20 @@ exports.connect = function () {
                     .catch(error => Logger.log("error", "Error fetching messages in channel"));
             }
         });
+
+        client.on("interactionCreate", async interaction => {
+            if (!interaction.isChatInputCommand()) return;
+        
+            const { commandName } = interaction;
+            Logger.log("info", `Received command ${commandName}`);
+
+            if (commandsTable.has(commandName)) {
+                await interaction.deferReply();
+                var response_cb = commandsTable.get(commandName);
+                await response_cb(interaction);
+            }
+        });
+
     });
 };
 
@@ -112,7 +127,7 @@ function getRoleIds(client) {
         .then(roles => {
             var adminRoles = [];
             var memberRoles = [];
-            roles.cache.forEach((role, key) => {
+            roles.forEach((role, key) => {
                 if (role.name == conf().Discord.AdminRole) {
                     adminRoles.push(role);
                 } else if (role.name == conf().Discord.MemberRole) {
