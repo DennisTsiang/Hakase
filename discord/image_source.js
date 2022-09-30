@@ -1,5 +1,5 @@
 const conf = require("../config/conf");
-const sagiri = require('sagiri');
+const sagiri = require("sagiri");
 const Logger = require("../logger/logger");
 const Discord = require("discord.js");
 
@@ -19,18 +19,22 @@ module.exports.searchSauceNAO = async (message, client) => {
         return;
     }
     const image = message.attachments.first();
+    if (!image.contentType.includes("image"))
+    {
+        return;
+    }
     let results = await sauceNAO(image.url, { maskExclude: [3,4,16,18,27] });
     results = results.filter(result => result.similarity >= 85);
     if (results.length == 0) {
         return;
     }
-    let response = new Discord.Message(client, null, message.channel);
-    pixivResult = results.find(result => result.site == 'Pixiv');
+    let response = "";
+    pixivResult = results.find(result => result.site == "Pixiv");
     if (pixivResult != undefined) {
-        response.content = "Source: <" + pixivResult.url + ">";
+        response = "Source: <" + pixivResult.url + ">";
     } else {
         results.sort(resultsCompareFn);
-        response.content = "Source: <" + results[0].url + ">";
+        response = "Source: <" + results[0].url + ">";
     }
     await message.channel.send(response)
         .then(msg => {
@@ -40,20 +44,20 @@ module.exports.searchSauceNAO = async (message, client) => {
                 return reaction.emoji.id === conf().Discord.EmojiReactID;
             };
             const collector = msg.createReactionCollector(filter, { time: 15 * 60 * 1000}); // Time is in milliseconds
-            collector.on('collect', async (reaction) => {
+            collector.on("collect", async (reaction) => {
                 // Possible race conditions as this is asynchronous. May not be a problem in actual usage.
                 Logger.log("info", "User reacted to message with emoji id: " + reaction.emoji.id);
                 reactionCount += 1;
-                if (reactionCount == 3) {
+                if (reactionCount == 1) {
                     await message.channel.send("Hehe so many people are giving Hakase headpats~\nhttps://i.imgur.com/s41O1Zu.jpg");
                     collector.stop();
                 }
             });
-            collector.on('remove', async () => {
+            collector.on("remove", async () => {
                 reactionCount -= 1;
             });
         });
-}
+};
 
 function resultsCompareFn(a, b) {
     if (a.similarity > b.similarity) {
