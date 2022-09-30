@@ -48,7 +48,7 @@ module.exports.searchSauceNAO = async (message, client) => {
                 // Possible race conditions as this is asynchronous. May not be a problem in actual usage.
                 Logger.log("info", "User reacted to message with emoji id: " + reaction.emoji.id);
                 reactionCount += 1;
-                if (reactionCount == 1) {
+                if (reactionCount == 3) {
                     await message.channel.send("Hehe so many people are giving Hakase headpats~\nhttps://i.imgur.com/s41O1Zu.jpg");
                     collector.stop();
                 }
