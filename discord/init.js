@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, Partials, ChannelType } = require("discord.js");
 const Logger = require("../logger/logger");
 const Promise = require("promise");
 const conf = require("../config/conf");
@@ -11,15 +11,22 @@ const { commandsTable } = require("./slash_commands.js");
 
 exports.connect = function () {
     return new Promise(function (resolve, reject) {
-        const client = new Client({ intents: [
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent,
-            GatewayIntentBits.GuildMembers,
-            GatewayIntentBits.DirectMessages,
-            GatewayIntentBits.GuildMessageReactions,
-            GatewayIntentBits.GuildPresences
-        ] });
+        const client = new Client({
+            intents: [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.MessageContent,
+                GatewayIntentBits.GuildMembers,
+                GatewayIntentBits.DirectMessages,
+                GatewayIntentBits.GuildMessageReactions,
+                GatewayIntentBits.GuildPresences
+            ],
+            partials: [
+                Partials.User, // We want to receive uncached users!
+                Partials.Message, // We want to receive uncached messages!
+                Partials.Channel // Needed for direct messages
+            ]
+        });
 
         Logger.log("info", "Connecting to Discord...");
         client.login(conf().Discord.APIKey);
@@ -42,14 +49,14 @@ exports.connect = function () {
                 return;
             }
             if (message.cleanContent.startsWith("HAKASE HAKASE HAKASE")) {
-                if (message.channel.type == "dm") {
+                if (message.channel.type == ChannelType.DM) {
                     var newMember = message.author;
                     newMember.send(welcomeMessage(newMember));
                 } else {
                     await message.channel.send("https://tinyurl.com/y3os3kk3");
                 }
             } else if (message.cleanContent.toLowerCase() == "help") {
-                if (message.channel.type == "dm")
+                if (message.channel.type == ChannelType.DM)
                 {
                     Logger.log("info", "Got a command, now executing...");
                     message.cleanContent = message.content = "!help";
