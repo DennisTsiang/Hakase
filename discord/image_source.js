@@ -43,11 +43,11 @@ module.exports.searchSauceNAO = async (message, client) => {
     await message.channel.send(response)
         .then(msg => {
             let reactionCount = 0;
-            const filter = (reaction) => {
+            const filter = (reaction, user) => {
                 // The headpat emoji 
                 return reaction.emoji.id === conf().Discord.EmojiReactID;
             };
-            const collector = msg.createReactionCollector(filter, { time: 15 * 60 * 1000}); // Time is in milliseconds
+            const collector = msg.createReactionCollector({ filter, time: 15 * 60 * 1000}); // Time is in milliseconds
             collector.on("collect", async (reaction) => {
                 // Possible race conditions as this is asynchronous. May not be a problem in actual usage.
                 Logger.log("info", "User reacted to message with emoji id: " + reaction.emoji.id);
