@@ -1,5 +1,5 @@
 const conf = require("../config/conf");
-const sagiri = require("sagiri");
+const sagiri = require("@kotosif/sagiri");
 const Logger = require("../logger/logger");
 const Discord = require("discord.js");
 
@@ -19,19 +19,23 @@ module.exports.searchSauceNAO = async (message, client) => {
         return;
     }
     const image = message.attachments.first();
-    if (!image.contentType.includes("image"))
-    {
-        return;
-    }
-    let results = await sauceNAO(image.url, { maskExclude: [3,4,16,18,27] });
+    let results = await sauceNAO(image.url, { mask: [5, 6, 9, 12, 21, 22, 34, 36, 37, 39, 41, 44] });
     results = results.filter(result => result.similarity >= 85);
     if (results.length == 0) {
         return;
     }
+    let prioritySites = ["Pixiv", "deviantArt", "Twitter"];
+    let imageResult = null;
+    for (let site of prioritySites)
+    {
+        imageResult = results.find(result => result.site == site);
+        if (imageResult != undefined || imageResult != null) {
+            break;
+        }
+    }
     let response = "";
-    pixivResult = results.find(result => result.site == "Pixiv");
-    if (pixivResult != undefined) {
-        response = "Source: <" + pixivResult.url + ">";
+    if (imageResult != undefined || imageResult != null) {
+        response = "Source: <" + imageResult.url + ">";
     } else {
         results.sort(resultsCompareFn);
         response = "Source: <" + results[0].url + ">";
