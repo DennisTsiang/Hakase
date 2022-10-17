@@ -19,6 +19,10 @@ module.exports.searchSauceNAO = async (message, client) => {
         return;
     }
     const image = message.attachments.first();
+    if (!image.contentType.includes("image"))
+    {
+        return;
+    }
     let results = await sauceNAO(image.url, { mask: [5, 6, 9, 12, 21, 34, 36, 37, 39, 41, 44] });
     results = results.filter(result => result.similarity >= 85);
     if (results.length == 0) {
