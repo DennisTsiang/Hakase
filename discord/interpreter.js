@@ -23,8 +23,8 @@ module.exports.handleCom = async (message, client) => {
         var guildMember = message.member;
         var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
-                guildMember.hasPermission("MANAGE_GUILD") ||
-                guildMember.hasPermission("ADMINISTRATOR"))) {
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
             await message.channel.send(`Only ${conf().Discord.AdminRole} members or server managers are allowed to use this command.`);
             return;
         }
@@ -84,8 +84,8 @@ module.exports.handleCom = async (message, client) => {
         var guildMember = message.member;
         var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
-                guildMember.hasPermission("MANAGE_GUILD") ||
-                guildMember.hasPermission("ADMINISTRATOR"))) {
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
             await message.channel.send(`Only ${conf().Discord.AdminRole} allowed to use this command.`);
             return;
         }
@@ -104,8 +104,8 @@ module.exports.handleCom = async (message, client) => {
         var guildMember = message.member;
         var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
-                guildMember.hasPermission("MANAGE_GUILD") ||
-                guildMember.hasPermission("ADMINISTRATOR"))) {
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
             await message.channel.send(`Only ${conf().Discord.AdminRole} allowed to use this command.`);
             return;
         }
@@ -198,8 +198,8 @@ If your roles do not change within the next few hours, feel free to PM a ${conf(
         var guildMember = message.member;
         var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
-                guildMember.hasPermission("MANAGE_GUILD") ||
-                guildMember.hasPermission("ADMINISTRATOR"))) {
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
+                guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
             await message.channel.send(`Only ${conf().Discord.AdminRole} allowed to use this command.`);
             return;
         }
