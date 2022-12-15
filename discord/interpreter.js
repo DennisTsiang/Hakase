@@ -13,6 +13,24 @@ const USER_NOT_FOUND_MESSAGE = "Hakase couldn't find such a user with that nickn
 module.exports.handleCom = async (message, client) => {
     var command = message.cleanContent.split(" ");
     var op = command.shift();
+
+    let guild = await client.guilds.fetch(conf().Discord.GuildId);
+    let guildMember = null;
+    try {
+        guildMember = await guild.members.fetch(message.author.id);
+    } catch (err) {
+        Logger.log("info", `User ${message.author.username} not from server but is trying to invoke commands`);
+        await message.channel.send("Sakamoto told me not to talk to strangers!");
+        return;
+    }
+    var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name).filter(role => role != "@everyone");
+    if (roles.length == 0)
+    {
+        Logger.log("info", `User ${message.author.username} not verified but is trying to invoke commands`);
+        await message.channel.send("Sakamoto told me not to talk to strangers!");
+        return;
+    }
+
     switch (op) {
     case "!whois":
         var nick = command.join(" ").trim();
@@ -20,8 +38,6 @@ module.exports.handleCom = async (message, client) => {
         break;
     case "!insertuser":
     case "!insert_user":
-        var guildMember = message.member;
-        var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
@@ -81,8 +97,6 @@ module.exports.handleCom = async (message, client) => {
         }
         break;
     case "!list_users":
-        var guildMember = message.member;
-        var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
@@ -101,8 +115,6 @@ module.exports.handleCom = async (message, client) => {
     case "!delete_user":
         var nick = command.join(" ");
         nick = nick.trim();
-        var guildMember = message.member;
-        var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
@@ -195,8 +207,6 @@ If your roles do not change within the next few hours, feel free to PM a ${conf(
         }
         break;
     case "!fetch_users_json":
-        var guildMember = message.member;
-        var roles = Array.from(guildMember.roles.cache.values()).map(role => role.name);
         if (!(roles.includes(conf().Discord.AdminRole) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.ManageGuild) ||
                 guildMember.permissions.has(Discord.PermissionsBitField.Flags.Administrator))) {
