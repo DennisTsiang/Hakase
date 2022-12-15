@@ -114,7 +114,7 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
     const gptResponse = await openAIClient.complete(openAIParameters);
     console.log(gptResponse.data);
     let response = gptResponse.data.choices[0].text.replace("Hakase: ", "");
-    if (response == "" || response.length > 400) {
+    if (response == "" || response.length > 380) {
         return "Sorry Hakase is busy right now. Go ask Nano instead.";
     }
     return response;
