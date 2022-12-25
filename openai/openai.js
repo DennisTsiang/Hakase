@@ -100,20 +100,20 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
     }
 
     const openAIParameters = {
-        engine: "curie",
+        engine: "text-curie-001",
         prompt: "",
         max_tokens: 150,
         temperature: 0.5,
         stream: false,
         user: "",
-        stop: ["\n", "\r\n", "Human"]
+        stop: ["Human"]
     };
     
     openAIParameters.prompt = intialPrompt + "Human: " + input + "\r\n";
     openAIParameters.user = userID;
     const gptResponse = await openAIClient.complete(openAIParameters);
     console.log(gptResponse.data);
-    let response = gptResponse.data.choices[0].text.replace("Hakase: ", "");
+    let response = gptResponse.data.choices[0].text.replace("Hakase:", "");
     if (response == "" || response.length > 380) {
         return "Sorry Hakase is busy right now. Go ask Nano instead.";
     }
