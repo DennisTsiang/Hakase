@@ -14,6 +14,51 @@ module.exports.handleCom = async (message, client) => {
     var command = message.cleanContent.split(" ");
     var op = command.shift();
 
+    if (op == "!register") {
+        Logger.log("info", "Received register request");
+        var params = command.join(" ").split(",");
+        var realName = params[0];
+        if (realName === "") {
+            await message.channel.send("Please provide a real name.");
+            return;
+        }
+        var fresher = false;
+        if (params.length >= 2) {
+            var fresherStr = params[1].trim().toLowerCase().replace(/"/g, "");
+            if (["yes", "no"].indexOf(fresherStr) === -1) {
+                await message.channel.send(`${params[1]} is not a valid second argument. Please enter "yes" if you are a fresher, "no" otherwise.`);
+                return;
+            }
+            fresher = fresherStr === "yes";
+        }
+        var identification = "";
+        if (params.length > 2) {
+            identification = params.slice(2).join(",");
+        } else if (message.attachments.size > 0) {
+            let attachmentIterator = message.attachments.values();
+            let attachment = attachmentIterator.next();
+            while (!attachment.done) {
+                identification += attachment.value.url + " ";
+                attachment = attachmentIterator.next();
+            }
+        }
+        var channelName = conf().Discord.AdminChannel;
+        findChannel(channelName, client).then(async (channel) => {
+            if (!channel) {
+                Logger.log("info", `Could not find channel: ${channelName}`);
+            } else {
+                Logger.log("info", "Admin channel found. Sending message...");
+                channel.send(`New user ${message.author.username} (real name apparently ${realName}, fresher: ${fresherStr}, identification provided: ${identification}) has requested to join the server.
+If the user seems legitimate, please add them via:`);
+                channel.send(`\`!insertuser ${message.author.username}, ${fresher ? "fresher" : "non-fresher"}, ${realName}\``);
+                await message.channel.send(
+                    `Thanks for registering! A ${conf().Discord.AdminRole} member should review your request shortly.
+If your roles do not change within the next few hours, feel free to PM a ${conf().Discord.AdminRole}`);
+            }
+        });
+        return;
+    }
+
     let guild = await client.guilds.fetch(conf().Discord.GuildId);
     let guildMember = null;
     try {
@@ -146,49 +191,6 @@ module.exports.handleCom = async (message, client) => {
                 }
             });
         }
-        break;
-    case "!register":
-        Logger.log("info", "Received register request");
-        var params = command.join(" ").split(",");
-        var realName = params[0];
-        if (realName === "") {
-            await message.channel.send("Please provide a real name.");
-            return;
-        }
-        var fresher = false;
-        if (params.length >= 2) {
-            var fresherStr = params[1].trim().toLowerCase().replace(/"/g, "");
-            if (["yes", "no"].indexOf(fresherStr) === -1) {
-                await message.channel.send(`${params[1]} is not a valid second argument. Please enter "yes" if you are a fresher, "no" otherwise.`);
-                return;
-            }
-            fresher = fresherStr === "yes";
-        }
-        var identification = "";
-        if (params.length > 2) {
-            identification = params.slice(2).join(",");
-        } else if (message.attachments.size > 0) {
-            let attachmentIterator = message.attachments.values();
-            let attachment = attachmentIterator.next();
-            while (!attachment.done) {
-                identification += attachment.value.url + " ";
-                attachment = attachmentIterator.next();
-            }
-        }
-        var channelName = conf().Discord.AdminChannel;
-        findChannel(channelName, client).then(async (channel) => {
-            if (!channel) {
-                Logger.log("info", `Could not find channel: ${channelName}`);
-            } else {
-                Logger.log("info", "Admin channel found. Sending message...");
-                channel.send(`New user ${message.author.username} (real name apparently ${realName}, fresher: ${fresherStr}, identification provided: ${identification}) has requested to join the server.
-If the user seems legitimate, please add them via:`);
-                channel.send(`\`!insertuser ${message.author.username}, ${fresher ? "fresher" : "non-fresher"}, ${realName}\``);
-                await message.channel.send(
-                    `Thanks for registering! A ${conf().Discord.AdminRole} member should review your request shortly.
-If your roles do not change within the next few hours, feel free to PM a ${conf().Discord.AdminRole}`);
-            }
-        });
         break;
     case "!HAKASE":
         if (command.length > 0) {
