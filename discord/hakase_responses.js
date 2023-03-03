@@ -180,6 +180,24 @@ module.exports.interpretHakaseQuery = async (client, message) => {
                     }
                 });
             }
+        ],
+        [
+            query == "have some milk",
+            "received milk request",
+            () => {
+                return message.channel.send(
+                    {
+                        content: "Thank you! A growing scientist like me needs lots of milk to power her day!",
+                        files: [
+                            {
+                                attachment: "images/milk.jpg",
+                                name: "milk.jpg",
+                                description: "milk.jpg"
+                            }
+                        ]
+                    }
+                );
+            }
         ]
     ];
 

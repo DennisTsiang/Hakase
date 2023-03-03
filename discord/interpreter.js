@@ -197,7 +197,8 @@ If your roles do not change within the next few hours, feel free to PM a ${conf(
             hakase.interpretHakaseQuery(client, message);
         } else {
             message.channel.send("Hakase here! How can I help?").then(() => {
-                message.channel.awaitMessages(m => m.author.id === message.author.id, { max: 1, time: 10000, errors: ["time"] })
+                const filter = m => m.author.id === message.author.id;
+                message.channel.awaitMessages({ filter, max: 1, time: 10000, errors: ["time"] })
                     .then(collected => {
                         hakase.interpretHakaseQuery(client, collected.first());
                     })
