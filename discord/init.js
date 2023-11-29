@@ -40,7 +40,10 @@ exports.connect = function () {
 
         //When a member joins the server
         client.on("guildMemberAdd", function (newMember) {
-            newMember.send(welcomeMessage(newMember.user));
+            if (conf().Discord.PostWelcomeMessage)
+            {
+                newMember.send(welcomeMessage(newMember.user));
+            }
         });
 
         //When a member messages bot
@@ -51,7 +54,10 @@ exports.connect = function () {
             if (message.cleanContent.startsWith("HAKASE HAKASE HAKASE")) {
                 if (message.channel.type == ChannelType.DM) {
                     var newMember = message.author;
-                    newMember.send(welcomeMessage(newMember));
+                    if (conf().Discord.PostWelcomeMessage)
+                    {
+                        newMember.send(welcomeMessage(newMember));
+                    }
                 } else {
                     await message.channel.send("https://tinyurl.com/y3os3kk3");
                 }
