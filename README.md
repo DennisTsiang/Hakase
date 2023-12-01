@@ -78,3 +78,9 @@ Example:
 }
 
 ```
+## Easy set-up
+
+Easiest way to set this up is to use render.com for deployment. Choose node server and add 2 secret files.
+One for `conf.json` and one for `users.json`. Only caveat is that `users.json` will revert every restart unless you have a storage plan. I plan to add a way to use external storage host for storing the json.
+
+To ensure the app doesn't go to sleep use cron-job.org to set up automatic jobs to ping the server.
