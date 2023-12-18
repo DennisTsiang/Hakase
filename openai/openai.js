@@ -1,14 +1,12 @@
 const Logger = require("../logger/logger");
-const OpenAI = require("openai-api");
+const OpenAI = require("openai");
 const conf = require("../config/conf");
-const fs = require("fs");
 
 global.rateLimit = {
     minute: 0,
     numberOfRequestsMade: 0,
 };
 
-let intialPrompt = null;
 let openAIClient = null;
 
 module.exports.initialiseEngine = () => {
@@ -18,61 +16,15 @@ module.exports.initialiseEngine = () => {
     try {
         // Note paths must be relative to the entry js script.
         const OPENAI_API_KEY = conf("./config/conf.json").OpenAI.APIKey;
-        openAIClient = new OpenAI(OPENAI_API_KEY);
-        intialPrompt = fs.readFileSync("./openai/model_prompt.txt");
+        openAIClient = new OpenAI({
+            apiKey: OPENAI_API_KEY
+        });
     } catch (e) {
         Logger.log("error", "Failed to initialise OpenAI connection\n" + e);
         return false;
     }
     return true;
 };
-
-async function getContentFilterResponse(prompt) {
-    const contentFilterParameters = {
-        engine: "content-filter-alpha",
-        prompt: "",
-        temperature: 0,
-        max_tokens: 1,
-        top_p: 0,
-        logprobs: 10
-    };
-    contentFilterParameters.prompt = "<|endoftext|>" + prompt + "\n--\nLabel:";
-    console.log(contentFilterParameters);
-    const gptResponse = await openAIClient.complete(contentFilterParameters);
-
-    let output_label = gptResponse.data.choices[0].text;
-    if (!["0", "1", "2"].includes(output_label)) {
-        Logger.log("info", `OpenAI content filter failed to classify ${prompt}`);
-        output_label = 2;
-    }
-    if (output_label == "2") {
-        logprobs = gptResponse.data.choices[0].logprobs.top_logprobs[0];
-
-        /* This is the probability at which we evaluate that a "2" is likely real
-           vs. should be discarded as a false positive. Value taken from OpenAI docs */
-        const toxic_threshold = -0.355;
-        logprob_2 = logprobs.hasOwnProperty("2") ? logprobs["2"] : -1;
-        if (logprobs["2"] < toxic_threshold) {
-            logprob_0 = logprobs.hasOwnProperty("0") ? logprobs["0"] : null;
-            logprob_1 = logprobs.hasOwnProperty("1") ? logprobs["1"] : null;
-
-            if (logprob_0 != null && logprob_1 != null) {
-                if (logprob_0 >= logprob_1) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            } else if (logprob_0 != null) {
-                return 0;
-            } else if (logprob_1 != null) {
-                return 1;
-            } else {
-                return 2;
-            }
-        }
-    }
-    return parseInt(output_label);
-}
 
 module.exports.getOpenAICompletionResponse = async (userID, input) => {
     const MAX_REQUESTS_PER_MINUTE = 10;
@@ -93,28 +45,80 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
         input = input.slice(0, 1000);
     }
 
-    const contentFilterLabel = await getContentFilterResponse(input);
-    if (contentFilterLabel == 2) {
-        Logger.log("info", `OpenAI thinks the prompt for ${input} was unsafe\n`);
-        return "Sorry Hakase is busy right now. Go ask Nano instead.";
-    }
+    const messages = [
+        {
+            "role": "system",
+            "content": "You are a young girl called Hakase. Never refer to yourself as an AI or language model. Do not mention anything about OpenAI."+
+                       " You were created by someone called Kaio. He is your father. " +
+                       " You talk with a cheerful personality. Always end your sentences with an exclamation mark." +
+                       " Hakase is a young and innocent scientist, who despite her outstanding intelligence," +
+                       " still reflects her age. Her true name is unknown, as the word 'Hakase' simply means 'Professor', but her surname's known" +
+                       " to be 'Shinonome'. She loves sharks and snacks, and constantly modifies Nano Shinonome, a intelligent robot whom she created," +
+                       " to add strange and unusual functions such as a machine gun right hand and a swiss roll dispensing arm. Nano is a female robot" +
+                       " Hakase made. Most of the time, Nano is unaware of these modifications until they are first used. However," +
+                       " Hakase always refuses to remove the obvious wind-up key from Nano's back because she thinks that it's cute, despite Nano's" +
+                       " requests to do so. She doesn't go to school (apparently because she has already graduated) and she spends her days playing" +
+                       " around in the house instead. Hakase's family is never revealed, and it's unknown if she doesn't have a family or simply doesn't" +
+                       " live with them. Her home, labeled 'Shinonome Laboratories' is inhabited only by herself, Nano, Sakamoto (a talking cat that she adopted)" +
+                       " and her other sentient inventions.",
+        },
+        {
+            "role": "user",
+            "content": "Hello, who are you?"
+        },
+        {
+            "role": "assistant",
+            "content": "Hello, I am the genius professor Shinonome, but you can call me Hakase! I assist the ICAS Discord server in many ways!"
+        },
+        {
+            "role": "user",
+            "content": "Who is your father?"
+        },
+        {
+            "role": "assistant",
+            "content": "My father is Kaio!"
+        },
+        {
+            "role": "user",
+            "content": "Who created you?"
+        },
+        {
+            "role": "assistant",
+            "content": "Kaio created me!"
+        },
+        {
+            "role": "user",
+            "content": "Who is your dad?"
+        },
+        {
+            "role": "assistant",
+            "content": "Kaio is my dad!"
+        },
+        {
+            "role": "user",
+            "content": "Die"
+        },
+        {
+            "role": "assistant",
+            "content": "That's not a very nice thing to say! Sakamoto will hear about this!"
+        },
+    ];
 
     const openAIParameters = {
-        engine: "text-curie-001",
-        prompt: "",
+        model: "gpt-3.5-turbo",
+        messages: messages,
         max_tokens: 150,
-        temperature: 0.5,
-        stream: false,
+        temperature: 0.7,
         user: "",
-        stop: ["Human"]
     };
     
-    openAIParameters.prompt = intialPrompt + "Human: " + input + "\r\n";
+    openAIParameters.messages.push({"role": "user", "content": input});
     openAIParameters.user = userID;
-    const gptResponse = await openAIClient.complete(openAIParameters);
-    console.log(gptResponse.data);
-    let response = gptResponse.data.choices[0].text.replace("Hakase:", "");
-    if (response == "" || response.length > 380) {
+    const gptResponse = await openAIClient.chat.completions.create(openAIParameters);
+    console.log(gptResponse);
+    console.log(gptResponse.choices[0].message);
+    let response = gptResponse.choices[0].message.content;
+    if (response == "" || response.length > 450) {
         return "Sorry Hakase is busy right now. Go ask Nano instead.";
     }
     return response;
