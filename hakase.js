@@ -3,7 +3,6 @@ const winston = require("winston");
 const server = require("./webserver/server");
 const conf = require("./config/conf.js");
 const init = require("./discord/init");
-const auth = require("./user/auth");
 
 process.on("unhandledRejection", (reason, p) => {
     console.log("Unhandled Rejection at: Promise", p, "reason:", reason.stack);
@@ -21,9 +20,6 @@ try {
 
 //Connect to Discord
 var clientPromise = init.connect();
-
-//Load user list
-auth.loadUsers();
 
 //Start listening on port 8080
 server.startServer(clientPromise);

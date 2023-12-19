@@ -74,13 +74,20 @@ Example:
 
   "OpenAI": {
     "APIKey": ""
-  }
+  },
+
+  "ImageKit": {
+    "Enabled": false,
+    "APIKey": "",
+    "PublicKey": "",
+    "URLEndpoint": ""
+  },
 }
 
 ```
 ## Easy set-up
 
 Easiest way to set this up is to use render.com for deployment. Choose node server and add 2 secret files.
-One for `conf.json` and one for `users.json`. Only caveat is that `users.json` will revert every restart unless you have a storage plan. I plan to add a way to use external storage host for storing the json.
+One for `conf.json` and one for `users.json`. Only caveat is that `users.json` will revert every restart unless you have a storage plan. You can use ImageKit as an external storage host to store the users.json file.
 
 To ensure the app doesn't go to sleep use cron-job.org to set up automatic jobs to ping the server.

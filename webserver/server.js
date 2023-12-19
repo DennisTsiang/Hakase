@@ -1,12 +1,16 @@
 const http = require("http");
 const url = require("url");
 const Logger = require("../logger/logger");
+const auth = require("../user/auth");
 
 const conf = require("../config/conf");
 
-module.exports.startServer = function(dClient) {
+module.exports.startServer = async function(dClient) {
     Logger.log("debug", "Creating server object...");
     const server = http.createServer((req, res) => {requestHandler(req, res, dClient);});
+
+    //Load user list
+    await auth.loadUsers();
 
     server.listen(conf().Web.Port, (err) => {
         if (err) {
