@@ -3,6 +3,10 @@ const sagiri = require("@kotosif/sagiri");
 const Logger = require("../logger/logger");
 const Discord = require("discord.js");
 
+function containsURL(string) {
+    return new RegExp("([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?").test(string);
+}
+
 module.exports.searchSauceNAO = async (message, client) => {
     if (message.author.id === client.user.id) {
         return;
@@ -23,7 +27,7 @@ module.exports.searchSauceNAO = async (message, client) => {
     {
         return;
     }
-    let results = await sauceNAO(image.url, { mask: [5, 6, 9, 12, 21, 34, 36, 37, 39, 41, 44] });
+    let results = await sauceNAO(image.url, { mask: [5, 6, 9, 12, 21, 25, 34, 36, 37, 39, 41, 44] });
     results = results.filter(result => result.similarity >= 85);
     if (results.length == 0) {
         return;
@@ -42,7 +46,17 @@ module.exports.searchSauceNAO = async (message, client) => {
         response = "Source: <" + imageResult.url + ">";
     } else {
         results.sort(resultsCompareFn);
-        response = "Source: <" + results[0].url + ">";
+        let mostSimilarResult = results[0];
+        let source = mostSimilarResult.url;
+
+        // For Booru sites check if the original source is listed
+        if (mostSimilarResult.raw != undefined && mostSimilarResult.raw.data != undefined) {
+            let rawData = mostSimilarResult.raw.data;
+            if (rawData.source != undefined && containsURL(rawData.source)) {
+                source = rawData.source;
+            }
+        }
+        response = "Source: <" + source + ">";
     }
     await message.channel.send(response)
         .then(msg => {
