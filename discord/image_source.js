@@ -27,7 +27,13 @@ module.exports.searchSauceNAO = async (message, client) => {
     {
         return;
     }
-    let results = await sauceNAO(image.url, { mask: [5, 6, 9, 12, 21, 25, 34, 36, 37, 39, 41, 44] });
+    let results = null;
+    try {
+        results = await sauceNAO(image.url, { mask: [5, 6, 9, 12, 21, 25, 34, 36, 37, 39, 41, 44] });
+    } catch (err) {
+        Logging.log("error", "Sagari SauceNao server encountered an error.");
+        return;
+    }
     results = results.filter(result => result.similarity >= 85);
     if (results.length == 0) {
         return;
