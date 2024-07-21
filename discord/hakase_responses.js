@@ -33,22 +33,22 @@ module.exports.interpretHakaseQuery = async (client, message) => {
         [
             query == "meow" || query.includes("nya"),
             "Received meow request",
-            () => { return message.channel.send("https://tinyurl.com/y2mlo33q"); }
+            () => { return message.channel.send("https://media1.tenor.com/m/C0vzT7UlaRQAAAAC/anime-cat.gif"); }
         ],
         [
             query == "dance",
             "Received dance request",
-            () => { return message.channel.send("https://tinyurl.com/yyulqpeg"); }
+            () => { return message.channel.send("https://media1.tenor.com/m/Wv9mH4pQx-8AAAAC/anime-nichijou.gif"); }
         ],
         [
             query == "shark",
             "Received shark request",
-            () => { return message.channel.send("https://tinyurl.com/yybbw6au"); }
+            () => { return message.channel.send("https://media1.tenor.com/m/503A7BR2Uy8AAAAC/hakase-nichijou.gif"); }
         ],
         [
             query == "go to sleep" || query == "sleep",
             "Received sleep request",
-            () => { return message.channel.send("But I don't wanna!\nhttps://tinyurl.com/y5xmjyuo"); }
+            () => { return message.channel.send("But I don't wanna!\nhttps://media1.tenor.com/m/nPVVBdX_VvQAAAAC/hakase-nichijou.gif"); }
         ],
         [
             query == "have a roll cake",
@@ -92,12 +92,12 @@ module.exports.interpretHakaseQuery = async (client, message) => {
             "Received jankenpon request",
             () => {
                 let clips = [
-                    "https://gfycat.com/saltyunfoldedechidna",
-                    "https://gfycat.com/sarcasticconsciousivorybilledwoodpecker",
-                    "https://gfycat.com/heartysolidanchovy",
-                    "https://gfycat.com/livetenseelephantseal",
-                    "https://gfycat.com/pinkcheapgermanshorthairedpointer",
-                    "https://gfycat.com/presentdefiantbantamrooster",
+                    "https://media1.tenor.com/m/4cYTigrVuGgAAAAd/hakase-rock-paper-scissors.gif",
+                    "https://media1.tenor.com/m/nMq0avMu-A0AAAAd/nichijou-rock-paper-scissors.gif",
+                    "https://media1.tenor.com/m/etwiSEEQd1wAAAAd/hakase-rock-paper-scissors.gif",
+                    "https://media1.tenor.com/m/B_WxnkZHbuIAAAAC/konakonagifs-playing.gif",
+                    "https://media1.tenor.com/m/6KyZS5ThLYgAAAAd/nichijou-anime.gif",
+                    "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGxnZnpmaGV4bWlzYXAyODczOWQzNTE2czF2ajlsc3Bvd25wcnF5MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wZyJFbxHFcxfvnf80x/giphy.gif",
                 ];
                 let random = Math.floor(Math.random() * clips.length);
                 let outcome = clips[random];
