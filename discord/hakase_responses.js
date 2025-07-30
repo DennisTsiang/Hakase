@@ -209,7 +209,7 @@ module.exports.interpretHakaseQuery = async (client, message) => {
         }
     }
 
-    Logger.log("info", "Received unknown request. Trying OpenAI GPT-3 response...");
+    Logger.log("info", "Received unknown request. Trying OpenAI response...");
     if (!OpenAI.initialiseEngine()) {
         return;
     }

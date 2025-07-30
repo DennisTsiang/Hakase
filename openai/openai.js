@@ -105,7 +105,7 @@ module.exports.getOpenAICompletionResponse = async (userID, input) => {
     ];
 
     const openAIParameters = {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4.1-mini",
         messages: messages,
         max_tokens: 150,
         temperature: 0.7,
